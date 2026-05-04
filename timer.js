@@ -1,44 +1,40 @@
-// Elementi
-const timerDisplay = document.getElementById('timer-display');
-const timerStartBtn = document.getElementById('timer-start');
-const timerPauseBtn = document.getElementById('timer-pause');
-const timerResetBtn = document.getElementById('timer-reset');
-const timerModeToggle = document.getElementById('timer-mode-toggle');
-const pomodoroSkipBtn = document.getElementById('pomodoro-skip');
+const timerDisplay     = document.getElementById('timer-display');
+const timerStartBtn    = document.getElementById('timer-start');
+const timerPauseBtn    = document.getElementById('timer-pause');
+const timerResetBtn    = document.getElementById('timer-reset');
+const timerModeToggle  = document.getElementById('timer-mode-toggle');
+const pomodoroSkipBtn  = document.getElementById('pomodoro-skip');
 
-const customSection = document.getElementById('timer-custom-section');
-const pomodoroSection = document.getElementById('timer-pomodoro-section');
+const customSection    = document.getElementById('timer-custom-section');
+const pomodoroSection  = document.getElementById('timer-pomodoro-section');
 
-const hoursInput = document.getElementById('timer-hours');
-const minutesInput = document.getElementById('timer-minutes');
-const secondsInput = document.getElementById('timer-seconds');
+const hoursInput       = document.getElementById('timer-hours');
+const minutesInput     = document.getElementById('timer-minutes');
+const secondsInput     = document.getElementById('timer-seconds');
 
-const pomodoroPhaseEl = document.getElementById('pomodoro-phase');
-const pomodoroCountEl = document.getElementById('pomodoro-count');
+const pomodoroPhaseEl  = document.getElementById('pomodoro-phase');
+const pomodoroCountEl  = document.getElementById('pomodoro-count');
 
-// Stāvoklis
+const POMODORO_WORK        = 25 * 60;
+const POMODORO_SHORT_BREAK =  5 * 60;
+const POMODORO_LONG_BREAK  = 15 * 60;
+
 let mode = 'custom';            // 'custom' vai 'pomodoro'
 let intervalId = null;
 let remainingSeconds = 0;
 let isRunning = false;
 let isPaused = false;
 
-// Pomodoro konstantes (sekundes)
-const POMODORO_WORK = 25 * 60;
-const POMODORO_SHORT_BREAK = 5 * 60;
-const POMODORO_LONG_BREAK = 15 * 60;
-
-let pomodoroPhase = 'work';     // 'work', 'short', 'long'
+let pomodoroPhase = 'work';     // 'work' | 'short' | 'long'
 let completedSessions = 0;
 
-// === DISPLEJS ===
-function formatTime(totalSeconds) {
-    const h = Math.floor(totalSeconds / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = totalSeconds % 60;
+//DISPLEJS
+function formatTime(total) {
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
     const pad = n => String(n).padStart(2, '0');
-    if (h > 0) return `${pad(h)}:${pad(m)}:${pad(s)}`;
-    return `${pad(m)}:${pad(s)}`;
+    return h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
 }
 
 function updateDisplay() {
@@ -48,14 +44,13 @@ function updateDisplay() {
         : 'Mācību plānotājs';
 }
 
-// === VADĪBA ===
+//VADĪBA
 function startTimer() {
     if (isRunning) return;
 
-    // Pirmā palaišana — paņem ilgumu
     if (!isPaused) {
         if (mode === 'custom') {
-            const h = parseInt(hoursInput.value) || 0;
+            const h = parseInt(hoursInput.value)   || 0;
             const m = parseInt(minutesInput.value) || 0;
             const s = parseInt(secondsInput.value) || 0;
             remainingSeconds = h * 3600 + m * 60 + s;
@@ -90,17 +85,16 @@ function resetTimer() {
     isRunning = false;
     isPaused = false;
     timerDisplay.classList.remove('running');
+    document.title = 'Mācību plānotājs';
 
     if (mode === 'custom') {
         remainingSeconds = 0;
         updateDisplay();
     } else {
-        // Pomodoro: atiestata uz darba sesijas sākumu un noliek skaitītāju nullē
         completedSessions = 0;
         updatePomodoroCount();
         setPomodoroPhase('work');
     }
-    document.title = 'Mācību plānotājs';
 }
 
 function timerFinished() {
@@ -111,25 +105,26 @@ function timerFinished() {
 
     if (mode === 'custom') {
         setTimeout(() => alert('⏰ Taimeris pabeigts!'), 100);
-    } else {
-        if (pomodoroPhase === 'work') {
-            completedSessions++;
-            updatePomodoroCount();
-            if (completedSessions % 4 === 0) {
-                setPomodoroPhase('long');
-                setTimeout(() => alert('🎉 4 darba sesijas pabeigtas! Laiks garai pauzei (15 min).'), 100);
-            } else {
-                setPomodoroPhase('short');
-                setTimeout(() => alert('✅ Darba sesija pabeigta! Laiks īsai pauzei (5 min).'), 100);
-            }
+        return;
+    }
+
+    if (pomodoroPhase === 'work') {
+        completedSessions++;
+        updatePomodoroCount();
+        if (completedSessions % 4 === 0) {
+            setPomodoroPhase('long');
+            setTimeout(() => alert('🎉 4 darba sesijas pabeigtas! Laiks garai pauzei (15 min).'), 100);
         } else {
-            setPomodoroPhase('work');
-            setTimeout(() => alert('☕ Pauze beigusies! Laiks darbam (25 min).'), 100);
+            setPomodoroPhase('short');
+            setTimeout(() => alert('✅ Darba sesija pabeigta! Laiks īsai pauzei (5 min).'), 100);
         }
+    } else {
+        setPomodoroPhase('work');
+        setTimeout(() => alert('☕ Pauze beigusies! Laiks darbam (25 min).'), 100);
     }
 }
 
-// === POMODORO ===
+//POMODORO
 function setPomodoroPhase(phase) {
     pomodoroPhase = phase;
     pomodoroPhaseEl.className = `pomodoro-phase ${phase}`;
@@ -159,14 +154,13 @@ function skipPomodoroPhase() {
     if (pomodoroPhase === 'work') {
         completedSessions++;
         updatePomodoroCount();
-        if (completedSessions % 4 === 0) setPomodoroPhase('long');
-        else setPomodoroPhase('short');
+        setPomodoroPhase(completedSessions % 4 === 0 ? 'long' : 'short');
     } else {
         setPomodoroPhase('work');
     }
 }
 
-// === REŽĪMA PĀRSLĒGŠANA ===
+//REŽĪMA PĀRSLĒGŠANA
 function toggleMode() {
     clearInterval(intervalId);
     isRunning = false;
@@ -193,7 +187,7 @@ function toggleMode() {
     }
 }
 
-// === INICIALIZĀCIJA ===
+//INICIALIZĀCIJA
 updateDisplay();
 timerStartBtn.addEventListener('click', startTimer);
 timerPauseBtn.addEventListener('click', pauseTimer);
