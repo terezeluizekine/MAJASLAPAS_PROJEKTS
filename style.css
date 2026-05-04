@@ -1,0 +1,861 @@
+:root{
+    --background: #f6f4ef;
+    --primary-color: #ffffff;
+    --secondary-color: #e3e0d6;
+    --text-color: #1a1f1c;
+
+    --accent-color: #2d5a3d;
+    --accent-hover: #1f4530;
+    --accent-soft: #e8f0ea;
+
+    --muted-text: #6b7066;
+    --line-soft: #efece4;
+    --danger: #b94a3b;
+
+    --priority-high: #b94a3b;
+    --priority-medium: #d68a3a;
+    --priority-low: #4a8c5e;
+
+    --shadow-sm: 0 1px 2px rgba(45, 90, 61, 0.05);
+    --shadow-md: 0 4px 14px rgba(45, 90, 61, 0.08);
+}
+
+*{ margin: 0; padding: 0; box-sizing: border-box; }
+
+html{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16pt;
+    color: var(--text-color);
+}
+
+body{
+    min-height: 100vh;
+    padding: 20px 10px;
+    background-color: var(--background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1{
+    margin-top: 20px;
+    margin-bottom: 28px;
+    font-size: 3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--accent-color);
+    letter-spacing: -0.01em;
+}
+
+h2{
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--accent-color);
+}
+
+/* === NAVIGĀCIJA === */
+.nav {
+    position: relative;
+    width: 1200px;
+    max-width: 100%;
+    background: var(--primary-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 1000px;
+    padding: 6px;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+}
+.nav::-webkit-scrollbar { display: none; }
+
+.nav-pill {
+    position: absolute;
+    top: 6px;
+    height: calc(100% - 12px);
+    background: var(--accent-soft);
+    border: 2px solid var(--accent-color);
+    border-radius: 1000px;
+    transition: left 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+                width 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+    z-index: 0;
+}
+
+.nav-item {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted-text);
+    padding: 12px 18px;
+    border-radius: 1000px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: color 0.25s ease;
+    flex-shrink: 0;
+}
+.nav-item:hover { color: var(--text-color); }
+.nav-item.active { color: var(--accent-color); }
+.nav-item svg { width: 18px; height: 18px; stroke-width: 2; }
+
+/* === SATURA RĀMJI === */
+.content {
+    width: 900px;
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+[data-active="visi"] .content {
+    width: 1200px;
+    max-width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+        "calendar calendar"
+        "habits todos"
+        "timer timer";
+    gap: 20px;
+    align-items: start;
+}
+
+[data-active="kalendars"] .content {
+    width: 1200px;
+    max-width: 100%;
+}
+
+.block {
+    display: none;
+    background: var(--primary-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 25px;
+    padding: 24px 28px 28px;
+    animation: fadeIn 0.4s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+.block:hover {
+    border-color: var(--accent-color);
+    box-shadow: var(--shadow-md);
+}
+.block h2 {
+    margin: 0 0 20px;
+    text-align: left;
+    font-size: 1.4rem;
+}
+
+[data-active="visi"] .block[data-blocks~="visi"],
+[data-active="visi"] .block[data-blocks~="kalendars"],
+
+[data-active="uzdevumi"]   .block[data-blocks~="uzdevumi"],
+[data-active="ieradumi"]   .block[data-blocks~="ieradumi"],
+[data-active="taimeris"]   .block[data-blocks~="taimeris"],
+[data-active="kalendars"]  .block[data-blocks~="kalendars"],
+[data-active="statistika"] .block[data-blocks~="statistika"] {
+    display: block;
+}
+
+[data-active="visi"] .block[data-blocks~="kalendars"] {
+    grid-area: calendar;
+}
+
+[data-active="visi"] .block[data-blocks~="ieradumi"] {
+    grid-area: habits;
+}
+
+[data-active="visi"] .block[data-blocks~="uzdevumi"] {
+    grid-area: todos;
+}
+
+[data-active="visi"] .block[data-blocks~="taimeris"] {
+    grid-area: timer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.block.placeholder {
+    border-style: dashed;
+    text-align: center;
+    padding: 45px 30px;
+}
+.block.placeholder h2 { text-align: center; }
+.block.placeholder p {
+    color: var(--muted-text);
+    font-size: 0.95rem;
+    margin-top: 8px;
+}
+
+/* === FORMA UN SARAKSTI === */
+.wrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#todo-input, #habit-input{
+    box-sizing: border-box;
+    padding: 12px 20px;
+    padding-right: 150px;
+    width: 100%;
+    background: var(--background);
+    border: 2px solid var(--secondary-color);
+    border-radius: 1000px;
+    font: inherit;
+    color: var(--text-color);
+    caret-color: var(--accent-color);
+    transition: border-color 0.2s ease;
+}
+#todo-input::placeholder, #habit-input::placeholder { color: var(--muted-text); }
+#todo-input:focus, #habit-input:focus{
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+/* Habit + Todo formas: poga absolūta */
+#habit-form,
+#todo-form{
+    position: relative;
+    margin-bottom: 10px;
+}
+#habit-form #add-button,
+#todo-form #add-button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--accent-color);
+    height: 100%;
+    padding: 0 30px;
+    border: none;
+    border-radius: 1000px;
+    font: inherit;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#habit-form #add-button:hover,
+#todo-form #add-button:hover { background-color: var(--accent-hover); }
+
+
+/* === SARAKSTA VIENUMI === */
+.todo, .habit{
+    margin-bottom: 10px;
+    padding: 0 12px 0 16px;
+    background-color: var(--background);
+    border: 1px solid var(--line-soft);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s ease;
+}
+.todo:hover, .habit:hover { border-color: var(--secondary-color); }
+
+.todo .todo-text, .habit .habit-text{
+    padding: 15px 0;
+    flex-grow: 1;
+    transition: 200ms ease;
+    cursor: pointer;
+    font-size: 0.95rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+    white-space: normal;
+}
+
+/* Prioritātes krāsu kods (kreisā mala) */
+.todo.priority-high   { border-left: 4px solid var(--priority-high); }
+.todo.priority-medium { border-left: 4px solid var(--priority-medium); }
+.todo.priority-low    { border-left: 4px solid var(--priority-low); }
+
+/* Kontroles uz to-do vienuma */
+.todo-priority-select,
+.todo-deadline-input{
+    padding: 6px 10px;
+    background: var(--primary-color);
+    border: 1px solid var(--line-soft);
+    border-radius: 1000px;
+    font: inherit;
+    font-size: 0.72rem;
+    color: var(--muted-text);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+.todo-priority-select:hover,
+.todo-deadline-input:hover{
+    border-color: var(--accent-color);
+    color: var(--text-color);
+}
+.todo-deadline-input { width: 130px; }
+
+.todo.priority-high   .todo-priority-select { color: var(--priority-high);   font-weight: 600; }
+.todo.priority-medium .todo-priority-select { color: var(--priority-medium); font-weight: 600; }
+.todo.priority-low    .todo-priority-select { color: var(--priority-low);    font-weight: 600; }
+
+/* Pārkāpts termiņš */
+.todo.overdue .todo-deadline-input{
+    color: var(--danger);
+    border-color: var(--danger);
+    font-weight: 600;
+}
+
+.delete-button{
+    padding: 3px;
+    background: none;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.delete-button svg{
+    fill: var(--muted-text);
+    transition: 200ms ease;
+}
+.delete-button:hover svg{ fill: var(--danger); }
+
+.custom-checkbox{
+    border: 2px solid var(--accent-color);
+    border-radius: 50%;
+    min-height: 20px;
+    min-width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    transition: 200ms ease;
+    cursor: pointer;
+}
+input[type="checkbox"]:checked ~ .custom-checkbox{ background-color: var(--accent-color); }
+input[type="checkbox"]:checked ~ .custom-checkbox svg{ fill: var(--primary-color); }
+input[type="checkbox"]:checked ~ .todo-text,
+input[type="checkbox"]:checked ~ .habit-text{
+    text-decoration: line-through;
+    color: var(--muted-text);
+}
+input[type="checkbox"]{ display: none; }
+
+
+/* === TAIMERIS === */
+.timer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.timer-header h2 { margin: 0; }
+
+.mode-toggle-btn {
+    padding: 8px 18px;
+    background: var(--accent-soft);
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+    border-radius: 1000px;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.mode-toggle-btn:hover {
+    background: var(--accent-color);
+    color: var(--primary-color);
+}
+
+.timer-section { margin-bottom: 16px; }
+
+/* Custom režīma ievades */
+.time-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+.time-input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.time-input-group input {
+    width: 90px;
+    padding: 14px;
+    background: var(--background);
+    border: 2px solid var(--secondary-color);
+    border-radius: 15px;
+    font: inherit;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-color);
+    appearance: textfield;
+    -moz-appearance: textfield;
+    transition: border-color 0.2s ease;
+}
+.time-input-group input::-webkit-outer-spin-button,
+.time-input-group input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.time-input-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+.time-input-group label {
+    font-size: 0.7rem;
+    color: var(--muted-text);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+
+/* Pomodoro info */
+.pomodoro-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.pomodoro-phase {
+    padding: 8px 18px;
+    border-radius: 1000px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.pomodoro-phase.work {
+    background: #fce8e6;
+    color: var(--danger);
+}
+.pomodoro-phase.short {
+    background: var(--accent-soft);
+    color: var(--accent-color);
+}
+.pomodoro-phase.long {
+    background: #e8e1f0;
+    color: #5a3d7a;
+}
+.pomodoro-count {
+    color: var(--muted-text);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Lielais displejs */
+.timer-display {
+    font-size: 5rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--accent-color);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    margin: 28px 0;
+    transition: opacity 0.3s ease;
+}
+.timer-display.running {
+    animation: timerPulse 2s ease-in-out infinite;
+}
+@keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+}
+
+/* Vadības pogas */
+.timer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.timer-btn {
+    padding: 12px 28px;
+    background: var(--background);
+    color: var(--text-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 1000px;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.timer-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+.timer-btn.primary {
+    background: var(--accent-color);
+    color: var(--primary-color);
+    border-color: var(--accent-color);
+}
+.timer-btn.primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: var(--primary-color);
+}
+
+/* === KALENDĀRS === */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.calendar-header h2 { margin: 0; }
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.cal-nav-btn {
+    width: 32px;
+    height: 32px;
+    background: var(--background);
+    border: 2px solid var(--secondary-color);
+    border-radius: 50%;
+    font: inherit;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+.cal-nav-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+.cal-title {
+    min-width: 170px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.cal-today-btn {
+    margin-left: 8px;
+    padding: 6px 14px;
+    background: var(--accent-soft);
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+    border-radius: 1000px;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.cal-today-btn:hover { background: var(--accent-color); color: var(--primary-color); }
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 6px;
+}
+.calendar-weekdays span {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted-text);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.cal-cell {
+    min-height: 110px;
+    aspect-ratio: auto;
+    background: var(--background);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.15s ease;
+    overflow: hidden;
+}
+
+.cal-cell:hover { border-color: var(--accent-color); }
+.cal-cell.other-month { opacity: 0.35; }
+.cal-cell.weekend .cal-day-num { color: var(--muted-text); }
+
+.cal-cell.today {
+    background: var(--accent-soft);
+    border-color: var(--accent-color);
+}
+.cal-cell.today .cal-day-num {
+    font-weight: 800;
+    color: var(--accent-color);
+}
+
+.cal-cell.selected {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+}
+.cal-cell.selected .cal-day-num,
+.cal-cell.selected .cal-dots .dot {
+    color: var(--primary-color);
+    background: none;
+}
+
+.cal-day-num {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.cal-dots {
+    display: flex;
+    gap: 3px;
+    align-self: flex-end;
+}
+.cal-dots .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.cal-dots .todo-dot { background: var(--accent-color); }
+.cal-dots .event-dot { background: var(--priority-medium); }
+
+/* Detaļu panelis */
+.calendar-detail {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line-soft);
+}
+#cal-detail-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: 16px;
+}
+.cal-detail-section { margin-bottom: 18px; }
+.cal-detail-section h4 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted-text);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.cal-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0;
+}
+
+.cal-item {
+    padding: 10px 14px;
+    background: var(--background);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+.cal-item-text { flex: 1; }
+.cal-item.completed .cal-item-text {
+    text-decoration: line-through;
+    color: var(--muted-text);
+}
+
+.cal-priority {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+.cal-priority-spacer { width: 22px; flex-shrink: 0; }
+.cal-priority-high   { background: var(--priority-high); }
+.cal-priority-medium { background: var(--priority-medium); }
+.cal-priority-low    { background: var(--priority-low); }
+
+.cal-empty {
+    color: var(--muted-text);
+    font-size: 0.85rem;
+    font-style: italic;
+    padding: 8px 0;
+    list-style: none;
+}
+
+#event-form {
+    position: relative;
+    margin-bottom: 8px;
+}
+#event-input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px 60px 10px 16px;
+    background: var(--background);
+    border: 2px solid var(--secondary-color);
+    border-radius: 1000px;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    transition: border-color 0.2s ease;
+}
+#event-input:focus { outline: none; border-color: var(--accent-color); }
+
+.add-btn-small {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 50px;
+    background: var(--accent-color);
+    color: var(--primary-color);
+    border: none;
+    border-radius: 1000px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    line-height: 1;
+}
+.add-btn-small:hover { background: var(--accent-hover); }
+
+.cal-event-item { justify-content: space-between; }
+.cal-delete {
+    background: none;
+    border: none;
+    color: var(--muted-text);
+    font-size: 1.3rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+    transition: color 0.2s ease;
+}
+.cal-delete:hover { color: var(--danger); }
+
+.cal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.cal-mini-item {
+    position: relative;
+
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    line-height: 1.2;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    margin: 0; 
+}
+
+.cal-mini-item.todo {
+    background: var(--accent-soft);
+    color: var(--accent-color);
+}
+
+.cal-mini-item.event {
+    background: #f3e6d8;
+    color: var(--priority-medium);
+}
+
+.cal-more {
+    font-size: 0.6rem;
+    color: var(--muted-text);
+}
+
+@media (max-width: 500px) {
+    .calendar-header { flex-direction: column; align-items: stretch; }
+    .calendar-nav { justify-content: center; flex-wrap: wrap; }
+    .cal-day-num { font-size: 0.75rem; }
+    .cal-title { min-width: 130px; font-size: 0.85rem; }
+    .cal-cell { padding: 4px; border-radius: 8px; }
+    .cal-dots .dot { width: 5px; height: 5px; }
+}
+
+@media (max-width: 500px){
+    .timer-display { font-size: 3.5rem; }
+    .time-input-group input { width: 70px; font-size: 1.3rem; padding: 10px; }
+    .timer-btn { padding: 10px 20px; font-size: 0.8rem; }
+}
+
+@media (max-width: 1000px){
+    [data-active="visi"] .content {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 700px){
+    .todo-priority-select { font-size: 0.65rem; padding: 5px 8px; }
+    .todo-deadline-input { width: 115px; font-size: 0.65rem; padding: 5px 8px; }
+    .todo .todo-text { font-size: 0.9rem; }
+}
+
+@media(max-width: 500px){
+    html{ font-size: 12pt; }
+    #todo-input, #habit-input{
+        padding: 12px 20px;
+    }
+    #habit-form #add-button,
+    #todo-form #add-button{
+        position: unset;
+        width: 100%;
+        margin-top: 10px;
+        padding: 15px;
+        height: auto;
+    }
+    #todo-form .form-extras > * { flex: 1 1 100%; }
+    h1{ margin-top: 50px; font-size: 15vw; }
+    .nav-item { padding: 8px 12px; font-size: 0.75rem; flex: 0 0 auto; }
+    .nav-item svg { width: 14px; height: 14px; }
+    .block { padding: 20px; border-radius: 20px; }
+}

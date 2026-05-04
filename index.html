@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mācību plānotājs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-active="visi">
+
+<div class="container">
+
+    <h1 class="brand">Mācību <span>plānotājs</span></h1>
+
+    <!-- Navigācija -->
+    <nav class="nav" id="nav" role="tablist">
+        <span class="nav-pill" id="navPill"></span>
+
+        <button class="nav-item active" data-target="visi" role="tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+            Visi
+        </button>
+
+        <button class="nav-item" data-target="uzdevumi" role="tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            To-do
+        </button>
+
+        <button class="nav-item" data-target="ieradumi" role="tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke-linejoin="round"/></svg>
+            Ieradumi
+        </button>
+
+        <button class="nav-item" data-target="taimeris" role="tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6" stroke-linecap="round"/></svg>
+            Taimeris
+        </button>
+
+        <button class="nav-item" data-target="kalendars" role="tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/></svg>
+            Kalendārs
+        </button>
+
+        <button class="nav-item" data-target="statistika" role="tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18M7 14l3-3 3 3 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Statistika
+        </button>
+    </nav>
+
+    <!-- Saturs -->
+    <main class="content">
+
+        <!-- Kalendārs -->
+        <section class="block" data-blocks="visi kalendars">
+            <div class="calendar-header">
+                <h2>Kalendārs</h2>
+                <div class="calendar-nav">
+                    <button id="cal-prev" class="cal-nav-btn" title="Iepriekšējais mēnesis">‹</button>
+                    <span id="cal-title" class="cal-title">Mēnesis</span>
+                    <button id="cal-next" class="cal-nav-btn" title="Nākamais mēnesis">›</button>
+                    <button id="cal-today" class="cal-today-btn">Šodien</button>
+                </div>
+            </div>
+
+            <div class="calendar-weekdays">
+                <span>Pr</span><span>Ot</span><span>Tr</span><span>Ce</span><span>Pk</span><span>Se</span><span>Sv</span>
+            </div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+
+            <div id="calendar-detail" class="calendar-detail" style="display:none;">
+                <h3 id="cal-detail-title">Datums</h3>
+
+                <div class="cal-detail-section">
+                    <h4>Uzdevumi ar termiņu</h4>
+                    <ul id="cal-todos-list" class="cal-list"></ul>
+                </div>
+
+                <div class="cal-detail-section">
+                    <h4>Notikumi</h4>
+                    <form id="event-form">
+                        <input id="event-input" type="text" placeholder="Pievieno notikumu..." autocomplete="off">
+                        <button type="submit" class="add-btn-small" title="Pievienot">+</button>
+                    </form>
+                    <ul id="cal-events-list" class="cal-list"></ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Ieradumi -->
+        <section class="block" data-blocks="visi ieradumi">
+            <h2>Ieradumi</h2>
+            <div class="wrapper">
+                <form id="habit-form">
+                    <input id="habit-input" type="text" placeholder="Raksti un spied 'enter', lai pievienotu" autocomplete="off">
+                    <button type="submit" id="add-button">Pievienot</button>
+                </form>
+                <ul id="habit-list"></ul>
+            </div>
+        </section>
+
+        <!-- Uzdevumi -->
+        <section class="block" data-blocks="visi uzdevumi">
+            <h2>Uzdevumi</h2>
+            <div class="wrapper">
+                <form id="todo-form">
+                    <input id="todo-input" type="text" placeholder="Raksti uzdevumu un spied 'enter'" autocomplete="off">
+                    <button type="submit" id="add-button">Pievienot</button>
+                </form>
+                <ul id="todo-list"></ul>
+            </div>
+        </section>
+
+        <!-- Taimeris -->
+        <section class="block" data-blocks="visi taimeris">
+            <div class="timer-header">
+                <h2>Taimeris</h2>
+                <button id="timer-mode-toggle" class="mode-toggle-btn">Pārslēgt uz Pomodoro</button>
+            </div>
+
+            <!-- Parastais taimeris -->
+            <div id="timer-custom-section" class="timer-section">
+                <div class="time-inputs">
+                    <div class="time-input-group">
+                        <input type="number" id="timer-hours" min="0" max="23" placeholder="0">
+                        <label>stundas</label>
+                    </div>
+                    <div class="time-input-group">
+                        <input type="number" id="timer-minutes" min="0" max="59" placeholder="0">
+                        <label>minūtes</label>
+                    </div>
+                    <div class="time-input-group">
+                        <input type="number" id="timer-seconds" min="0" max="59" placeholder="0">
+                        <label>sekundes</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pomodoro režīms -->
+            <div id="timer-pomodoro-section" class="timer-section" style="display:none;">
+                <div class="pomodoro-info">
+                    <span id="pomodoro-phase" class="pomodoro-phase work">Darbs</span>
+                    <span id="pomodoro-count" class="pomodoro-count">Sesija: 0</span>
+                </div>
+            </div>
+
+            <!-- Displejs un pogas -->
+            <div id="timer-display" class="timer-display">00:00</div>
+            <div class="timer-controls">
+                <button id="timer-start" class="timer-btn primary">Sākt</button>
+                <button id="timer-pause" class="timer-btn">Pauze</button>
+                <button id="timer-reset" class="timer-btn">Atiestatīt</button>
+                <button id="pomodoro-skip" class="timer-btn" style="display:none;">Izlaist fāzi</button>
+            </div>
+        </section>
+
+        <!-- Statistika -->
+        <section class="block placeholder" data-blocks="statistika">
+            <h2>Statistika</h2>
+            <p>Atskaites un grafiki — drīzumā.</p>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="app.js" defer></script>
+<script src="habit.js" defer></script>
+<script src="todo.js" defer></script>
+<script src="timer.js" defer></script>
+<script src="calendar.js" defer></script>
+</body>
+</html>
